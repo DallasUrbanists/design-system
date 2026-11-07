@@ -1,0 +1,16 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="Components/Icons" />
+
+# Icons
+
+Use these decorative icons in controls. For emoji characters in text, see <a href="./?path=/docs/components-emojis--docs" target="_top">Emojis</a>.
+
+Shared controls use static Lucide icons by default. Applications can provide a
+Vue component with a semantic icon name through `uiIconComponentKey`.
+Decorative icons are hidden from assistive technology; label icon-only controls.
+
+```js
+import { uiIconComponentKey } from '@dallasurbanists/ui'
+app.provide(uiIconComponentKey, YourIconRenderer)
+```

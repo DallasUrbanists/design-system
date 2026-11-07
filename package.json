@@ -1,0 +1,61 @@
+{
+  "name": "@dallasurbanists/ui",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "description": "Shared Vue controls and layouts for Dallas Urbanists projects",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": "26.13.0"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md",
+    "FIGTREE-LICENSE.txt"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./style.css": "./dist/style.css",
+    "./tokens.css": "./dist/tokens.css",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "dependencies": {
+    "@lucide/vue": "1.70.0",
+    "reka-ui": "2.11.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@changesets/cli": "3.0.3",
+    "@fontsource-variable/figtree": "5.3.0",
+    "@playwright/test": "1.64.1",
+    "@storybook/addon-docs": "10.6.5",
+    "@storybook/vue3-vite": "10.6.5",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "6.0.10",
+    "storybook": "10.6.5",
+    "typescript": "5.9.3",
+    "vite": "8.3.5",
+    "vue": "3.5.44",
+    "vue-tsc": "3.3.14"
+  },
+  "scripts": {
+    "lint": "node scripts/check-boundary.mjs",
+    "typecheck": "vue-tsc -p tsconfig.build.json --noEmit",
+    "build": "vite build && vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && node scripts/copy-assets.mjs",
+    "test": "node --test scripts/map-layout.test.mjs scripts/tray-state.test.mjs scripts/controls-ssr.mjs scripts/dialog-ssr.mjs && playwright test --config apps/web/tests/controls/playwright.config.mjs && playwright test --config apps/web/tests/dialog/playwright.config.mjs",
+    "dev:storybook": "storybook dev -c apps/web/.storybook -p 6007 --host 127.0.0.1 --no-open",
+    "build:storybook": "storybook build -c apps/web/.storybook -o storybook-static",
+    "test:storybook": "playwright test --config apps/web/tests/storybook/playwright.config.mjs"
+  }
+}
