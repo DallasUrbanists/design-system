@@ -15,6 +15,15 @@ for (const width of [320, 1280]) {
     const noticeResponse = await request.get('/THIRD-PARTY-NOTICES.txt')
     expect(noticeResponse.ok()).toBe(true)
     expect(await noticeResponse.text()).toContain('Nunito Sans manager font')
+    for (const [name, file, excerpt] of [
+      ['license', 'PROJECT-LICENSE.txt', 'Apache License'],
+      ['project notices', 'PROJECT-NOTICE.txt', 'DallasUrbanists/idea-map'],
+    ]) {
+      await expect(content.getByRole('link', { name, exact: true })).toHaveAttribute('href', `./${file}`)
+      const response = await request.get(`/${file}`)
+      expect(response.ok()).toBe(true)
+      expect(await response.text()).toContain(excerpt)
+    }
     const index = await (await request.get('/index.json')).json()
     const links = await content.locator('a[href*="?path=/"]').all()
     expect(links.length).toBeGreaterThan(10)

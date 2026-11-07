@@ -25,4 +25,11 @@ const notices = await readFile('apps/web/public-licenses/THIRD-PARTY-NOTICES.txt
 assert.ok(!notices.includes('UNRESOLVED:'), 'The catalog notice contains an unresolved entry')
 assert.ok(await readFile(join(root, 'THIRD-PARTY-NOTICES.txt'), 'utf8') === notices,
   'The static catalog must include the reviewed notice file')
+for (const [source, publicName] of [['LICENSE', 'PROJECT-LICENSE.txt'], ['NOTICE.md', 'PROJECT-NOTICE.txt']]) {
+  const expected = await readFile(source, 'utf8')
+  assert.ok(await readFile(join('apps/web/public-licenses', publicName), 'utf8') === expected,
+    `The catalog copy of ${source} must match the project file`)
+  assert.ok(await readFile(join(root, publicName), 'utf8') === expected,
+    `The static catalog must include ${source}`)
+}
 console.log('Removed the unreviewed Storybook ref helper and checked static output')

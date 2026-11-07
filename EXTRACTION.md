@@ -14,6 +14,8 @@
   directory includes their license texts and Lucide's. A conservative
   `THIRD-PARTY-NOTICES.txt` includes identified bundled manager and preview
   dependencies; its coverage still requires review before upload.
+- The catalog includes the library's Apache-2.0 license and project notices.
+  Its build verifies that those copies match the root `LICENSE` and `NOTICE.md`.
 - Storybook 10.6.5 embeds `use-composed-ref`, whose applicable copyright notice
   could not be verified. The static build removes that helper from its manager
   and preview inputs and uses Storybook's existing MIT-licensed Radix
