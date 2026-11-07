@@ -57,9 +57,9 @@
     "lint": "node scripts/check-boundary.mjs",
     "typecheck": "vue-tsc -p tsconfig.build.json --noEmit",
     "build": "vite build && vue-tsc -p tsconfig.build.json --declaration --emitDeclarationOnly && node scripts/copy-assets.mjs",
-    "test": "node --test scripts/map-layout.test.mjs scripts/tray-state.test.mjs scripts/controls-ssr.mjs scripts/dialog-ssr.mjs && playwright test --config apps/web/tests/controls/playwright.config.mjs && playwright test --config apps/web/tests/dialog/playwright.config.mjs",
+    "test": "node --test scripts/map-layout.test.mjs scripts/tray-state.test.mjs scripts/controls-ssr.mjs scripts/dialog-ssr.mjs scripts/storybook-ref-workaround.test.mjs && playwright test --config apps/web/tests/controls/playwright.config.mjs && playwright test --config apps/web/tests/dialog/playwright.config.mjs",
     "dev:storybook": "storybook dev -c apps/web/.storybook -p 6007 --host 127.0.0.1 --no-open",
-    "build:storybook": "storybook build -c apps/web/.storybook -o storybook-static",
+    "build:storybook": "storybook build -c apps/web/.storybook -o storybook-static && node scripts/sanitize-storybook-output.mjs",
     "test:storybook": "playwright test --config apps/web/tests/storybook/playwright.config.mjs"
   }
 }

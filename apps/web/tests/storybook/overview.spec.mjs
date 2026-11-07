@@ -10,6 +10,11 @@ for (const width of [320, 1280]) {
       await expect(content.getByRole('heading', { name: heading })).toBeVisible()
     }
     await expect(content).toContainText('Dedicated discussion components and application flows are not represented')
+    const notices = content.getByRole('link', { name: 'third-party notices' })
+    await expect(notices).toHaveAttribute('href', './THIRD-PARTY-NOTICES.txt')
+    const noticeResponse = await request.get('/THIRD-PARTY-NOTICES.txt')
+    expect(noticeResponse.ok()).toBe(true)
+    expect(await noticeResponse.text()).toContain('Nunito Sans manager font')
     const index = await (await request.get('/index.json')).json()
     const links = await content.locator('a[href*="?path=/"]').all()
     expect(links.length).toBeGreaterThan(10)

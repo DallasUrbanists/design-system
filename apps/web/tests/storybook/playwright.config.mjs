@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: '.',
   workers: 2,
   expect: { timeout: 15000 },
-  testMatch: ['docs.spec.mjs', 'tooltip.spec.mjs', 'catalog.spec.mjs', 'overview.spec.mjs', 'component-review.spec.mjs', 'shared-shell.spec.mjs', 'layout.spec.mjs', 'tray.spec.mjs'],
+  testMatch: ['docs.spec.mjs', 'tooltip.spec.mjs', 'catalog.spec.mjs', 'overview.spec.mjs', 'component-review.spec.mjs', 'shared-shell.spec.mjs', 'layout.spec.mjs', 'tray.spec.mjs', 'manager-ref.spec.mjs'],
   use: {
     baseURL: 'http://127.0.0.1:6011',
     browserName: 'chromium',
