@@ -26,6 +26,10 @@ jobs:
           [[ "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
           git fetch origin main
           git merge-base --is-ancestor "$REVIEWED_COMMIT" origin/main
+          if [[ "$REVIEWED_COMMIT" != "$GITHUB_SHA" ]]; then
+            echo '::error::The reviewed commit must match the main commit that started this workflow.'
+            exit 1
+          fi
           git checkout --detach "$REVIEWED_COMMIT"
       - uses: pnpm/action-setup@v5
       - uses: actions/setup-node@v7

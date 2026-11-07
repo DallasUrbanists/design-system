@@ -177,10 +177,12 @@ test('navigation uses links, labels, and current page semantics', async ({ page 
   await expect(nav.getByRole('link', { name: 'Nearby', exact: true })).not.toHaveAttribute('aria-current')
 })
 
-test('loading indicators preserve text and static skeletons under reduced motion', async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: 'reduce' })
+test('loading indicators preserve text and static defaults under reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' })
   await openStory(page, 'spinner')
   await expect(page.getByRole('status')).toHaveText('Saving your idea…')
+  await expect(page.locator('.ring')).toHaveCSS('animation-name', 'none')
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await expect(page.locator('.ring')).toHaveCSS('animation-name', 'none')
   await openStory(page, 'skeleton')
   const skeletonParts = page.locator('.skeleton *')

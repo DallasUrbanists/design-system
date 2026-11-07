@@ -41,6 +41,10 @@ jobs:
           git fetch origin main --tags
           commit=$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")
           git merge-base --is-ancestor "$commit" origin/main
+          if [[ "$commit" != "$GITHUB_SHA" ]]; then
+            echo '::error::The reviewed tag must match the main commit that started this workflow; npm provenance identifies that commit.'
+            exit 1
+          fi
           [[ "$CATALOG_URL" =~ ^https://([0-9a-f]{7,40})--[a-zA-Z0-9-]+\.chromatic\.com/?$ ]]
           [[ "$commit" == "${BASH_REMATCH[1]}"* ]]
           curl --fail --silent --show-error "${CATALOG_URL%/}/index.json" >/dev/null

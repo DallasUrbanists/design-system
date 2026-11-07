@@ -4,6 +4,10 @@
   "type": "module",
   "license": "Apache-2.0",
   "description": "Shared Vue controls and layouts for Dallas Urbanists projects",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DallasUrbanists/design-system.git"
+  },
   "packageManager": "pnpm@11.25.0",
   "engines": {
     "node": "26.13.0"

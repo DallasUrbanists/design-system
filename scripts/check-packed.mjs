@@ -1,4 +1,4 @@
-import { mkdtemp, writeFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { resolve, join, basename, sep } from 'node:path'
 import { execFileSync } from 'node:child_process'
@@ -21,6 +21,10 @@ const run = (args) => process.platform === 'win32'
   : execFileSync('pnpm', args, { cwd: dir, stdio: 'inherit' })
 try {
   run(['install'])
+  const installedManifest = JSON.parse(await readFile(join(dir, 'node_modules', '@dallasurbanists', 'ui', 'package.json'), 'utf8'))
+  if (installedManifest.repository?.url !== 'git+https://github.com/DallasUrbanists/design-system.git') {
+    throw new Error('The packed package must identify its public GitHub repository for npm provenance')
+  }
   run(['build'])
   console.log('Packed fixture built:', dir)
 } finally {

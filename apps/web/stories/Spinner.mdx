@@ -19,7 +19,7 @@ You should avoid flashing a spinner for very brief work. For an initial list loa
 
 ## Component contract
 
-The optional `label` prop defaults to `Loading`. Spinner has no events or slots. Its ring uses the shared spin timing and stops under reduced motion; the label remains visible in a status region. The parent mounts and removes the spinner around the request.
+The optional `label` prop defaults to `Loading`. Spinner has no events or slots. The default Lucide ring is static; an application-provided icon renderer can add motion and should respect reduced-motion preferences. The label remains visible in a status region. The parent mounts and removes the spinner around the request.
 
 ## Foundations and reference
 

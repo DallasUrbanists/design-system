@@ -36,3 +36,6 @@ candidate that must be reviewed and configured only after the scope, remote,
 release tag, catalog URL, archive digest, and trusted publisher are approved.
 Chromatic's project must have UI tests disabled for publish-only operation;
 configure its secret only after authorization. Never store credentials in Git.
+The catalog and package workflows require the reviewed commit or tag to match
+the main commit that started the workflow, so the catalog and npm provenance
+identify the same source. If main advances first, review a new release revision.
