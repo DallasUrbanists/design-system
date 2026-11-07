@@ -12,7 +12,9 @@ export default defineConfig({
   },
   webServer: {
     cwd: '../../../..',
-    command: 'pnpm exec storybook dev -c apps/web/.storybook --port 6011 --host 127.0.0.1 --no-open --ci',
+    command: process.env.STORYBOOK_TEST_STATIC === '1'
+      ? 'pnpm exec vite preview --outDir storybook-static --host 127.0.0.1 --port 6011 --strictPort'
+      : 'pnpm exec storybook dev -c apps/web/.storybook --port 6011 --host 127.0.0.1 --no-open --ci',
     url: 'http://127.0.0.1:6011',
     reuseExistingServer: false,
     env: { STORYBOOK_MAPS_TEST_MODE: '1' },

@@ -23,6 +23,12 @@ asset changes, and any intended static-default-icon differences for design
 approval. Add a Changeset for package changes. Keep provider-specific Maps and
 licensed Lordicon artwork in the consuming application.
 
+The Storybook tests normally use the development server. CI sets
+`STORYBOOK_TEST_STATIC=1` to run the same tests against the built catalog and
+avoid development-server reloads during accessibility scans. To reproduce
+that check, run `pnpm build` and `pnpm build:storybook`, then set
+`STORYBOOK_TEST_STATIC` to `1` before running `pnpm test:storybook`.
+
 Publication requires an authorized maintainer. CI checks forks without secrets.
 After catalog asset review and explicit upload authorization, set the repository
 variable `STATIC_CATALOG_UPLOAD_APPROVED` to `true` to retain the built catalog. The manually dispatched release workflow is a

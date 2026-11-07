@@ -31,8 +31,10 @@ test('nonmodal tray supports background and keyboard interaction without a focus
 test('wheel expansion, independent body scrolling, and top-of-body reduction coordinate', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 }); await story(page)
   const body = page.locator('.tray-body')
+  await expect(page.locator('.tray-layer')).toHaveAttribute('data-scrollable', 'true')
   await body.dispatchEvent('wheel', { deltaY: 100, cancelable: true }); await position(page, 'max')
   await body.evaluate(element => { element.scrollTop = 120 })
+  await expect.poll(() => body.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
   await body.dispatchEvent('wheel', { deltaY: -100, cancelable: true }); await position(page, 'max')
   await body.evaluate(element => { element.scrollTop = 0 })
   await body.dispatchEvent('wheel', { deltaY: -100, cancelable: true }); await position(page, 'medium')

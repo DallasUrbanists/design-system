@@ -24,6 +24,8 @@ jobs:
       - run: pnpm test
       - run: pnpm build:storybook
       - run: pnpm test:storybook
+        env:
+          STORYBOOK_TEST_STATIC: '1'
       - run: pnpm pack --pack-destination "$RUNNER_TEMP"
       - run: node scripts/check-packed.mjs "$RUNNER_TEMP/dallasurbanists-ui-$(node -p 'require("./package.json").version').tgz"
       - uses: actions/upload-artifact@v7

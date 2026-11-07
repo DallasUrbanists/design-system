@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
+import { readFile } from 'node:fs/promises'
 
 const docs = [
   'principles', 'tokens', 'color', 'typography', 'size-and-space',
@@ -88,8 +89,8 @@ test('token tables include every CSS token exactly once', async ({ page }) => {
     const names = await table.locator('tbody th code').allTextContents()
     expect(names).toEqual([...names].sort())
   }
-  const expected = await page.evaluate(async () => {
-    const css = (await import('./src/styles/tokens.css?raw')).default
+  const css = await readFile(new URL('../../src/styles/tokens.css', import.meta.url), 'utf8')
+  const expected = await page.evaluate(css => {
     const sheet = new CSSStyleSheet()
     sheet.replaceSync(css)
     const names = new Set()
@@ -106,7 +107,7 @@ test('token tables include every CSS token exactly once', async ({ page }) => {
     }
     collect(sheet.cssRules)
     return [...names]
-  })
+  }, css)
   expect(actual).toHaveLength(expected.length)
   expect([...actual].sort()).toEqual(expected.sort())
   await expect(page.getByRole('table', { name: 'Color tokens' })).toHaveCount(1)
@@ -186,6 +187,11 @@ test('token tables show matching theme and motion values', async ({ page }) => {
 })
 
 test('token reader resolves CSS changes and theme aliases', async ({ page }) => {
+  // Serve the source reader and its Vite raw-CSS import in both server modes.
+  const source = await readFile(new URL('../../stories/foundations/token-reference.js', import.meta.url), 'utf8')
+  const css = await readFile(new URL('../../src/styles/tokens.css', import.meta.url), 'utf8')
+  await page.route('**/stories/foundations/token-reference.js', route => route.fulfill({ contentType: 'text/javascript', body: source }))
+  await page.route(/\/src\/styles\/tokens\.css\?raw$/, route => route.fulfill({ contentType: 'text/javascript', body: `export default ${JSON.stringify(css)}` }))
   await page.goto('/iframe.html?id=foundations-tokens--docs&viewMode=docs&globals=theme:light')
   const result = await page.evaluate(async () => {
     const { createTokenReader } = await import('./stories/foundations/token-reference.js')
