@@ -9,6 +9,10 @@
   font assets are bundled into the stylesheet. Lucide: ISC-licensed external
   runtime package `@lucide/vue`. Microsoft Fluent Emoji samples: MIT license,
   with the license text alongside the catalog and in its static license folder.
+- The static catalog also includes Storybook's MIT-licensed code and its Nunito
+  Sans manager fonts under the SIL Open Font License 1.1. The static license
+  directory includes their license texts and Lucide's; other bundled manager
+  dependencies still require a complete notice review before upload.
 - The npm allowlist contains built ESM, declaration files, styles, README,
   Apache license, and notices; source stories and the catalog are excluded.
 - Before publication review the source, built catalog, and final npm archive

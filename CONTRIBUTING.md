@@ -34,7 +34,8 @@ After catalog asset review and explicit upload authorization, set the repository
 variable `STATIC_CATALOG_UPLOAD_APPROVED` to `true` to retain the built catalog. The manually dispatched release workflow is a
 candidate that must be reviewed and configured only after the scope, remote,
 release tag, catalog URL, archive digest, and trusted publisher are approved.
-Chromatic's project must have UI tests disabled for publish-only operation;
+Chromatic's project must have both UI Tests and UI Review disabled for
+publish-only operation;
 configure its secret only after authorization. Never store credentials in Git.
 The catalog and package workflows require the reviewed commit or tag to match
 the main commit that started the workflow, so the catalog and npm provenance
