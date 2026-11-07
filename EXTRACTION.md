@@ -11,8 +11,15 @@
   with the license text alongside the catalog and in its static license folder.
 - The static catalog also includes Storybook's MIT-licensed code and its Nunito
   Sans manager fonts under the SIL Open Font License 1.1. The static license
-  directory includes their license texts and Lucide's; other bundled manager
-  dependencies still require a complete notice review before upload.
+  directory includes their license texts and Lucide's. A conservative
+  `THIRD-PARTY-NOTICES.txt` includes identified bundled manager and preview
+  dependencies; its coverage still requires review before upload.
+- Storybook 10.6.5 embeds `use-composed-ref`, whose applicable copyright notice
+  could not be verified. The static build removes that helper from its manager
+  and preview inputs and uses Storybook's existing MIT-licensed Radix
+  compose-refs hook instead. Exact input hashes and an output scan fail the
+  build on unreviewed changes. The locally served development catalog is not
+  a publication artifact.
 - The npm allowlist contains built ESM, declaration files, styles, README,
   Apache license, and notices; source stories and the catalog are excluded.
 - Before publication review the source, built catalog, and final npm archive

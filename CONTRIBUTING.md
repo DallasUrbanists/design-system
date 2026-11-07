@@ -29,10 +29,19 @@ avoid development-server reloads during accessibility scans. To reproduce
 that check, run `pnpm build` and `pnpm build:storybook`, then set
 `STORYBOOK_TEST_STATIC` to `1` before running `pnpm test:storybook`.
 
+For the static catalog, the build replaces one embedded Storybook ref helper
+with Storybook's existing Radix compose-refs hook. The original helper's
+copyright notice could not be verified. The build checks exact Storybook input
+hashes, removes the helper from the preview and manager, and scans the output.
+A Storybook update or source maps require a new artifact and rights review;
+do not bypass a failing check to publish a catalog. Development Storybook is
+for local use and is not the reviewed static release artifact.
+
 Publication requires an authorized maintainer. CI checks forks without secrets.
 After catalog asset review and explicit upload authorization, set the repository
-variable `STATIC_CATALOG_UPLOAD_APPROVED` to `true` to retain the built catalog. The manually dispatched release workflow is a
-candidate that must be reviewed and configured only after the scope, remote,
+variable `STATIC_CATALOG_UPLOAD_APPROVED` to `true` to retain a successful
+catalog build. The manually dispatched release workflow is a candidate that
+must be reviewed and configured only after the scope, remote,
 release tag, catalog URL, archive digest, and trusted publisher are approved.
 Chromatic's project must have both UI Tests and UI Review disabled for
 publish-only operation;
