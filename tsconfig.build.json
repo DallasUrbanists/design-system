@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "skipLibCheck": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "declaration": true,
+    "declarationDir": "dist/types",
+    "allowImportingTsExtensions": true,
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "index.ts",
+    "apps/web/app/components/**/*.vue",
+    "apps/web/app/components/**/*.ts",
+    "apps/web/app/composables/**/*.ts"
+  ]
+}

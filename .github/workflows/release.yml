@@ -1,0 +1,75 @@
+name: Publish approved package
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: Reviewed release tag on main
+        required: true
+        type: string
+      catalog_url:
+        description: Immutable Chromatic commit permalink
+        required: true
+        type: string
+      archive_sha256:
+        description: SHA-256 of the reviewed final archive
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: npm-release
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Verify reviewed tag and catalog
+        env:
+          RELEASE_TAG: ${{ inputs.release_tag }}
+          CATALOG_URL: ${{ inputs.catalog_url }}
+          ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          [[ "$ARCHIVE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+          git fetch origin main --tags
+          commit=$(git rev-parse "refs/tags/$RELEASE_TAG^{commit}")
+          git merge-base --is-ancestor "$commit" origin/main
+          if [[ "$commit" != "$GITHUB_SHA" ]]; then
+            echo '::error::The reviewed tag must match the main commit that started this workflow; npm provenance identifies that commit.'
+            exit 1
+          fi
+          [[ "$CATALOG_URL" =~ ^https://([0-9a-f]{7,40})--[a-zA-Z0-9-]+\.chromatic\.com/?$ ]]
+          [[ "$commit" == "${BASH_REMATCH[1]}"* ]]
+          curl --fail --silent --show-error "${CATALOG_URL%/}/index.json" >/dev/null
+          git checkout --detach "$commit"
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - name: Prepare the reviewed archive
+        env:
+          CATALOG_URL: ${{ inputs.catalog_url }}
+          ARCHIVE_SHA256: ${{ inputs.archive_sha256 }}
+          RELEASE_TAG: ${{ inputs.release_tag }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "v$(node -p "require('./package.json').version")" == "$RELEASE_TAG" ]]
+          mkdir -p "$RUNNER_TEMP/package"
+          cp -R dist package.json README.md LICENSE NOTICE.md FIGTREE-LICENSE.txt "$RUNNER_TEMP/package/"
+          node --input-type=module -e "import fs from 'node:fs'; const p=process.argv[1]; const j=JSON.parse(fs.readFileSync(p)); j.storybook={url:process.env.CATALOG_URL}; fs.writeFileSync(p, JSON.stringify(j,null,2)+'\n')" "$RUNNER_TEMP/package/package.json"
+          (cd "$RUNNER_TEMP/package" && pnpm pack --pack-destination "$RUNNER_TEMP")
+          archive="$RUNNER_TEMP/dallasurbanists-ui-${RELEASE_TAG#v}.tgz"
+          echo "$ARCHIVE_SHA256  $archive" | sha256sum --check
+          npm publish "$archive" --access public --provenance

@@ -1,0 +1,46 @@
+name: Publish approved catalog
+on:
+  workflow_dispatch:
+    inputs:
+      reviewed_commit:
+        description: Reviewed commit reachable from main
+        required: true
+        type: string
+permissions:
+  contents: read
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main' && vars.CHROMATIC_PUBLISH_ONLY_CONFIRMED == 'true'
+    runs-on: ubuntu-latest
+    environment: chromatic-publish
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Select reviewed main revision
+        env:
+          REVIEWED_COMMIT: ${{ inputs.reviewed_commit }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$REVIEWED_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+          git fetch origin main
+          git merge-base --is-ancestor "$REVIEWED_COMMIT" origin/main
+          if [[ "$REVIEWED_COMMIT" != "$GITHUB_SHA" ]]; then
+            echo '::error::The reviewed commit must match the main commit that started this workflow.'
+            exit 1
+          fi
+          git checkout --detach "$REVIEWED_COMMIT"
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm build:storybook
+      - name: Publish the static catalog
+        uses: chromaui/action@1cb75e75b4fd9d49928f3c71552d34cc49b9ea39 # v18
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          storybookBuildDir: storybook-static

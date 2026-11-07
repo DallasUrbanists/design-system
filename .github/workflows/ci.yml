@@ -1,0 +1,36 @@
+name: Shared package checks
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm lint
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build:storybook
+      - run: pnpm test:storybook
+        env:
+          STORYBOOK_TEST_STATIC: '1'
+      - run: pnpm pack --pack-destination "$RUNNER_TEMP"
+      - run: node scripts/check-packed.mjs "$RUNNER_TEMP/dallasurbanists-ui-$(node -p 'require("./package.json").version').tgz"
+      - uses: actions/upload-artifact@v7
+        if: always() && vars.STATIC_CATALOG_UPLOAD_APPROVED == 'true'
+        with:
+          name: shared-storybook-${{ github.sha }}
+          path: storybook-static
+          if-no-files-found: ignore
